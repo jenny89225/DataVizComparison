@@ -9,7 +9,7 @@ export default function Intro(props){
 return(
   <div>
     <Container fluid>
-        <Header as='h1' textAlign='center'>Data Visualization comparison</Header>
+        <Header as='h1' textAlign='center'>Data Visualization Comparison</Header>
         <p>{content}</p>
         <p></p>
     </Container>
@@ -20,5 +20,5 @@ return(
 }
 
 
-const content = ['Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa strong. Cum sociis natoque penatibus etmagnis dis parturient montes, nascetur ridiculus mus. Donec quam felis,ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massaquis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget,arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.']
+const content = ['DataViz Comparison is a data comparison tool and provides data professions an interface to do ad-hoc comparison when visualizing the data.']
 
