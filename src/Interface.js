@@ -3,10 +3,11 @@ import { Container,Accordion, Icon, Segment,Grid,Image,Button,Dropdown, ButtonGr
 import UploadDataset from './UploadDataset'
 import ComparisonEditing from './ComparisonEditing'
 import ChartEditing from './ChartEditing'
-import DatasetTable from './DatasetTable'
-import Result from './Result'
+import Intro from './Intro'
 
-const palette = ['#5E67C2',"#6daba9","#C067BC","#FF719F","#FF947B","#00A1EC","#FFC563","#F9F871","#00D2E9","#BF464D"]
+
+const palette = ['#5E67C2',"#6daba9","#C067BC","#FF719F","#FF947B","#00A1EC","#ff7063","#f3f702","#00D2E9","#BF464D",
+'#FED766','#FE4A49','#009FB7','#804674','#A86464','#00FF00','#AA77FF','#A84448','#F7C04A','#539165','#C04A82','#3E54AC','#D70040']
 // const palette = [
 //     'red',
 //     'orange',
@@ -45,7 +46,7 @@ export default function Interface(props){
     const [visuals,setVisuals] = useState(
         [
             {chartType:'Line Chart',viewName:'daily taxi population',dimension:'day',metric:'population',legend:'company',aggfunc:"sum"},
-            {chartType:'Bar Chart',viewName:'daily taxi revenue',dimension:'day',metric:'revenue',legend:'company',aggfunc:"sum"},
+            {chartType:'Area Chart',viewName:'daily taxi revenue',dimension:'day',metric:'revenue',legend:'company',aggfunc:"sum"},
             {chartType:'Bar Chart',viewName:'taxi revenue by type',dimension:'type',metric:'revenue',legend:'company',aggfunc:"sum"}
     ])
 
@@ -155,17 +156,7 @@ export default function Interface(props){
     return(
     <div>
         <Container style={{ padding: '1em 0em' }}>
-            {/* <Result 
-                operands={operands} 
-                operator={operator} 
-                isSafe={isSafe} 
-                palette={palette} 
-                safetyCheckHandler={safetyCheckHandler} 
-                resultActive={resultActive}
-                resultActiveCheckHandler={resultActiveCheckHandler}
-                handleClickonRefreshResult={handleClickonRefreshResult}
-
-            /> */}
+            <Intro/>
             <Accordion>
                 <Accordion.Title
                 active={activeIndex === 0}
@@ -223,6 +214,7 @@ export default function Interface(props){
                             resultActive={resultActive}
                             resultActiveCheckHandler={resultActiveCheckHandler}
                             handleClickonRefreshResult={handleClickonRefreshResult}
+                            clickHandler={clickHandler}
                         />
                     </Segment.Group>
                 </Accordion.Content>

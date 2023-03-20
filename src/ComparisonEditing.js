@@ -111,6 +111,7 @@ export default function ComparisonEditing(props){
                         resultActive={props.resultActive}
                         resultActiveCheckHandler={props.resultActiveCheckHandler}
                         handleClickonRefreshResult={props.handleClickonRefreshResult}
+                        clickHandler={props.clickHandler}
                     />
                 </Grid.Row>
             </Grid>

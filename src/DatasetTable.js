@@ -8,7 +8,7 @@ export default function DatasetTable(props){
 
   const headerKeys = Object.keys(Object.assign({}, ...props.array));
   const shownRows = props.array.slice(0,10)
-
+  const nfObject = new Intl.NumberFormat('en-US');
 
   return(
     <Table celled>
@@ -23,7 +23,7 @@ export default function DatasetTable(props){
     {shownRows.map((item) => (
       <Table.Row key={item.id}>
               {Object.values(item).map((val) => (
-                <Table.Cell>{val}</Table.Cell>
+                <Table.Cell>{typeof val !== 'string'?nfObject.format(val):val}</Table.Cell>
               ))}
       </Table.Row>
           ))}

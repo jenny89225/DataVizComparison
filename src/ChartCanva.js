@@ -3,8 +3,7 @@ import { Icon, Menu, Segment,Button,Grid } from 'semantic-ui-react'
 import {useState, useEffect} from 'react';
 import NewLineChart from './ChartType/NewLineChart';
 import NewBarChart from './ChartType/NewBarChart';
-
-
+import NewAreaChart from './ChartType/NewAreaChart';
 // ???May need to remove add new canva since new canva added when creating new view.
 // Works to do: Handle duplicate name problem,handle undefined tooltip when legend is none, limit number of chart created!!
 
@@ -33,7 +32,7 @@ export default function ChartCanva(props) {
   // get length and unique values in dimension
   const dimensionValues = [...new Set(props.rawData.map(item => item[dimension]))]
   
-  // query diemension,metric,legend and push to new array 
+  // query diemension,metric,legend and push to new array
   const newArray = []
   for(let i=0;i<dimensionValues.length;i++){
       const newObject = {}
@@ -96,8 +95,8 @@ export default function ChartCanva(props) {
       activeChart= <div>Scatter Plot</div>
       break;
     case 'Area Chart':
-      activeChart= <div>This is area chart</div>
-      break;              
+      activeChart= <NewAreaChart activeCanva={activeCanva} data={newArray} palette={props.palette} compared={compared}/>
+      break;       
     default:
       activeChart= <div>Please add new chart</div>
   }
@@ -130,7 +129,7 @@ export default function ChartCanva(props) {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
-            <h2>{activeCanva.viewName}</h2>
+            <h3>{activeCanva.viewName}</h3>
           </Grid.Row>
           <Grid.Row centered>{activeChart}</Grid.Row>
           {/* <img src='https://react.semantic-ui.com/images/wireframe/paragraph.png' /> */}
@@ -138,20 +137,6 @@ export default function ChartCanva(props) {
       </Segment>
       <Menu attached='bottom' tabular>
         {allCanvas}
-
-        {/* <Menu.Menu position='right'>
-          <Menu.Item
-            name='new-tab'
-            // active={activeItem === 'new-tab'}
-            // onClick={handleCreateCanva}
-            
-          >
-            <Button>
-              <Icon name='add'/>
-              Add New Canva
-            </Button>
-          </Menu.Item>
-        </Menu.Menu> */}
       </Menu>
     </div>
   )

@@ -1,18 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,Legend,Cell
 } from "recharts";
 
 
-export default function NewBarChart(props){
+export default function NewAreaChart(props){
     
     const{chartType,viewName,dimension,metric,legend} = props.activeCanva
     
@@ -25,11 +17,6 @@ export default function NewBarChart(props){
     // set category hide or show
     const [catShow,setCatShow] = useState(labels.reduce((labels,curr)=> (labels[curr]=props.showLegend,labels),{}))
 
-
-    // // active bar idx
-    // const [activeIndex, setActiveIndex] = useState(-1);
-    // // active bar datak
-    // const [activeBar, setActiveBar] = useState(-1);
     
     const handleMouseClickonBar = (entry, index) => {
         const dataKey = entry.tooltipPayload[0].name
@@ -99,14 +86,15 @@ export default function NewBarChart(props){
         }    
     
     //use ternary operator to differenciate chart in creation or composition 
-    const bars = labels.map(
+    const areas = labels.map(
         (item,idx)=>
-        <Bar
+        <Area
             key={item} 
             type="monotone" 
             name={item}
             dataKey={item} 
             fill={color[item]}
+            stroke={color[item]}
             onClick={(props.opType=="Constant Value" || props.opType=="Mark")?handleMouseClickonBar:null}
        >
           { (props.opType=="Constant Value" || props.opType=="Mark")?
@@ -116,24 +104,24 @@ export default function NewBarChart(props){
               fill={index === props.activeIndex & idx === props.activeBar ? "#FF2400" : props.palette[idx]}
             />
           )):null}
-        </Bar>
+        </Area>
         )
 
 
     return(
-        <ResponsiveContainer aspect={2}  width={props.items>1?"100%":"80%"}>
-            <BarChart
+        <ResponsiveContainer aspect={2}  width={props.items>1?"100%":"70%"}>
+            <AreaChart
             
             data={newData}
-            margin={{top: 3,right: 15,left: 15,bottom: 3,}}>
+            margin={{top: 5,right: 30,left: 20,bottom: 5,}}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey={dimension} />
                 <YAxis />
-                <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
+                <Tooltip />
                 {props.opType=='Constant Value'?
                 <p></p>:<Legend onClick={props.compared && props.opType=="Legend Label"?handleClickonLegend:()=>{}}/>}
-                {bars}
-            </BarChart>
+                {areas}
+            </AreaChart>
         </ResponsiveContainer>
 
     )

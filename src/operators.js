@@ -98,7 +98,6 @@ function unionComposition(operands){
     }    
     // merge all legendlables data based on dimension values
     let res = {};
-    console.log("newData in union",newData)
     newData.forEach(item => res[item[dim]] = {...res[item[dim]], ...item});
     res = Object.values(res);
 

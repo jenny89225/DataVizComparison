@@ -1,9 +1,25 @@
-import React, { Component, useEffect, useState } from 'react'
-import { Segment,Grid,Image,Button, GridRow,} from 'semantic-ui-react'
-import {statisticalComposition,unionComposition,explodeComposition,extractComposition} from './operators.js'
-import ResultChart from './ChartType/ResultChart.js'
+import React, { Component, useEffect, useState,useCallback } from 'react';
+import { Segment,Grid,Image,Button, GridRow,} from 'semantic-ui-react';
+import {statisticalComposition,unionComposition,explodeComposition,extractComposition} from './operators.js';
+import ResultChart from './ChartType/ResultChart.js';
+import FileSaver from "file-saver";
+import { useCurrentPng } from "recharts-to-png";
 
 export default function Result(props){
+
+    // useCurrentPng usage (isLoading is optional)
+    const [getPng, { ref, isLoading }] = useCurrentPng();
+
+    const handleDownload = useCallback(async () => {
+        
+        const png = await getPng();
+        console.log(png)
+        // Verify that png is not undefined
+        if (png) {
+          // Download with FileSaver
+          FileSaver.saveAs(png, 'myChart.png');
+        }
+      }, [getPng]);
 
     // how to solve 2,3?
     // situation 1 exact operand type match
@@ -69,7 +85,7 @@ export default function Result(props){
         props.resultActiveCheckHandler(true)
     }
 
-    const resChart = <ResultChart
+    const res = <ResultChart
     resultActive={props.resultActive}
     isSafe={props.isSafe}
     newData={newData} 
@@ -78,25 +94,11 @@ export default function Result(props){
     palette={props.palette}
     legends={legends}
     op={props.operator.name}
-/>
-    const res = (
-    <Grid>
-        <Grid.Row centered>
-            <h3>The result of {props.operator.name}</h3>
-        </Grid.Row>
-        <Grid.Row centered>
-            {resChart}
-        </Grid.Row>
-        <Grid.Row centered>
-            <Button.Group size="tiny">
-                <Button size="tiny">Add chart as new view</Button>
-                {/* <Button size="tiny">Enable tooltip</Button> */}
-                <Button size="tiny">Save Image</Button>
-                <Button size="tiny" onClick={props.handleClickonRefreshResult}>Clear Result</Button>
-            </Button.Group>
-        </Grid.Row>                            
-    </Grid>
-    )
+    ref={ref}
+    handleClickonRefreshResult={props.handleClickonRefreshResult}
+    clickHandler={props.clickHandler}
+        />
+
 
     return(
         <Segment textAlign='center'  >

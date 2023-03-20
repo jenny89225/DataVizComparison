@@ -7,16 +7,21 @@ import DatasetTable from './DatasetTable';
 export default function UploadDataset(props){
   const [file, setFile] = useState();
   const [array, setArray] = useState(rawData);
+  const [fileName,setFileName] = useState("Demo Data for Taxi Population")
 
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFileName(e.target.files[0].name)
+    setFile(e.target.files[0]);
   };
 
   const csvFileToArray = string => {
     const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
     const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
+    
+    // remove empty row, need to change
+    csvRows.pop()
 
     const array = csvRows.map(text => {
       text = text.replace(/(\r\n|\n|\r)/gm, "");
@@ -24,7 +29,10 @@ export default function UploadDataset(props){
       
       const obj = csvHeader.reduce((object, header, index) => {
         // need to redesign for date data
-        if(!isNaN(parseInt(values[index])) && !values[index].includes("-")){
+        if(!isNaN(parseFloat(values[index])) && !values[index].includes("-")){
+          object[header] = parseFloat(values[index]) 
+        }
+        else if(!isNaN(parseInt(values[index])) && !values[index].includes("-")){
           object[header] = parseInt(values[index])   
         }else{
           object[header] = values[index];
@@ -66,10 +74,9 @@ return(
       style={{minWidth:"67em"}}
     /> 
     <Button floated='right' onClick={(e) => {handleOnSubmit(e)}}>Upload Datatset</Button>
+    <h3 >{fileName}</h3>
     <DatasetTable array={array}/>
   </div>
-  // <Segment clearing>
-  // </Segment>
 )
 
 }

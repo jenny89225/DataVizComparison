@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {Segment,Image,Dropdown,Button,Grid,Pagination} from 'semantic-ui-react'
 import NewLineChart from './ChartType/NewLineChart'
 import NewBarChart from './ChartType/NewBarChart'
+import NewAreaChart from "./ChartType/NewAreaChart";
 import 'semantic-ui-css/semantic.min.css'
 
 // comparison canva should remeber operands -> table attribute
@@ -24,6 +25,14 @@ export default function ComparisonCanva(props){
 
     // set selected dot for constant and mark in line chart
     const [selectedDot, setSelectedDot] = useState({ x: null, y: null });
+
+    // active bar idx
+    const [activeIndex, setActiveIndex] = useState(-1);
+    // active bar datak
+    const [activeBar, setActiveBar] = useState(-1);
+
+    // legend show or hide
+    const [showLegend, setShowLegend] = useState(true);
 
     // get unique values in legendlabel
     const legendLabels = [...new Set(props.rawData.map(item => item[legend]))]
@@ -58,6 +67,9 @@ export default function ComparisonCanva(props){
         props.safetyCheckHandler(false)
         if (selectedOpType!="Entire Chart"){
             setSelectedDot({x:null,y:null})
+            setActiveIndex(-1)
+            setActiveBar(-1)
+            setShowLegend(false)
             const newOperand = {}
             newOperand.idx=props.itemIdx
             newOperand.isSelected = false
@@ -98,15 +110,32 @@ export default function ComparisonCanva(props){
                         setOperandsHandler={props.setOperandsHandler}
                         idx={props.itemIdx}
                         items={props.items}
-                        selectedDot={selectedDot}
-                        setSelectedDot={setSelectedDot}
+                        activeIndex={activeIndex}
+                        setActiveIndex={setActiveIndex}
+                        activeBar={activeBar} 
+                        setActiveBar={setActiveBar}
+                        showLegend={showLegend}
                     />
         break;
     case 'Scatter Plot':
         activeChart= <div>Scatter Plot</div>
         break;
     case 'Area Chart':
-        activeChart= <div>This is area chart</div>
+        activeChart=  <NewAreaChart 
+                        activeCanva={selectedVisual} 
+                        data={newArray} 
+                        palette={props.palette} 
+                        compared={compared} 
+                        opType={selectedOpType}
+                        setOperandsHandler={props.setOperandsHandler}
+                        idx={props.itemIdx}
+                        items={props.items}
+                        activeIndex={activeIndex}
+                        setActiveIndex={setActiveIndex}
+                        activeBar={activeBar} 
+                        setActiveBar={setActiveBar}
+                        showLegend={showLegend}
+                     />
         break;              
     default:
         activeChart= <div>Please add new chart</div>
@@ -188,9 +217,10 @@ export default function ComparisonCanva(props){
                             size='mini' 
                             disabled={props.operator.name=="Decomposition-explode"?true:false}
                             onClick={handleClickonRefresh}
-                        >Refresh Operands</Button>       
+                        >Refresh Operands</Button>        
                     </Grid.Column>
                 </Grid.Row>
+                <Grid.Row centered><h3>{selectedVisual.viewName}</h3></Grid.Row>
                 <Grid.Row centered>{activeChart}</Grid.Row>
                 
             </Grid>

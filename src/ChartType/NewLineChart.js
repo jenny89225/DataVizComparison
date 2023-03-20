@@ -121,7 +121,7 @@ export default function NewLineChart(props){
         )
 
     return(
-        <ResponsiveContainer aspect={2}  width={props.items>1?"100%":"50%"}>
+        <ResponsiveContainer aspect={2}  width={props.items>1?"100%":"80%"}>
             <LineChart
             data={newData}
             margin={{
@@ -134,10 +134,10 @@ export default function NewLineChart(props){
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey={dimension} />
                 <YAxis />
-                <Tooltip />
+                <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
                 {props.opType=='Constant Value'?<p></p>:<Legend onClick={props.compared && props.opType=="Legend Label"?handleClickonLegend:()=>{}}/>}
                 {lines}
-                <ReferenceDot r={10} fill="black" x={newDot.x} y={newDot.y} stroke="none"/>
+                <ReferenceDot r={10} fill="#FF2400" x={newDot.x} y={newDot.y} stroke="none"/>
                 
             </LineChart>
         </ResponsiveContainer>
