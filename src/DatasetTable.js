@@ -13,9 +13,9 @@ export default function DatasetTable(props){
   return(
     <Table celled>
     <Table.Header>
-      <Table.Row key={"header"}>
+      <Table.Row key="header">
         {headerKeys.map((key) => (
-              <Table.HeaderCell>{key}</Table.HeaderCell>
+              <Table.HeaderCell key={{key}}>{key}</Table.HeaderCell>
             ))}
       </Table.Row>
     </Table.Header>

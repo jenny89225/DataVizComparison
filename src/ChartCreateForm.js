@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Form } from 'semantic-ui-react'
+import { Button, Form, Label} from 'semantic-ui-react'
 
 
 // works to do: clear dropdown after submit, alert incomplete submit
@@ -11,6 +11,9 @@ export default function ChartCreateForm(props){
     // ?? how to clear dropdown after submit https://codesandbox.io/s/white-leftpad-q6re3?file=/src/Fun.jsx:994-1017
 
     // const dimensionOptions =props.data[0]
+
+    // set alertMessage
+    const [alertMessage,setAlertMessage] = useState("")
     
     const dimensionOptions = props.dimensionOptions
     const metricOptions = props.metricOptions
@@ -22,6 +25,12 @@ export default function ChartCreateForm(props){
         value:'None'
     })
     const handleSubmit =(event)=>{
+        if(props.numVisuals>7){
+            const message = <Label basic color='red' pointing='left'>You can only create 8 visualizations</Label>
+            setAlertMessage(message)
+            setTimeout(() => {setAlertMessage("")}, 2000)
+            return 
+        }
         const form = document.forms.createView;
         // get dimension value, need to fix default value when submiting
         const dimension = form.getElementsByClassName('field')[0].getElementsByClassName('ui fluid selection dropdown').dimension.getElementsByClassName('divider text')[0].innerHTML
@@ -72,6 +81,7 @@ export default function ChartCreateForm(props){
             <input placeholder='View Name' name='viewName'/>
             </Form.Field>    
             <Button type='submit' >Create</Button>
+            {alertMessage}
         
         </Form>
     )

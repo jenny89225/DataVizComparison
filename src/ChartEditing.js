@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { Grid} from 'semantic-ui-react'
 import ChartCanva from './ChartCanva'
 import ChartCreateForm from './ChartCreateForm'
@@ -78,6 +78,7 @@ export default function ChartEditing(props) {
                     dimensionOptions={dimensions}
                     metricOptions={metrics}
                     chartTypeOptions={chartTypes}
+                    numVisuals={props.visuals.length}
                 />
             </Grid.Column>
             <Grid.Column width={12}>
@@ -108,14 +109,14 @@ const chartTypes = [
         text:'Line Chart',
         value:'Line Chart'
     },
-    {
-        key:'Scatter Plot',
-        text:'Scatter Plot',
-        value:'Scatter Plot'
-    },
-    {
-        key:'Area Chart',
-        text:'Area Chart',
-        value:'Area Chart'
-    }   
+    // {
+    //     key:'Scatter Plot',
+    //     text:'Scatter Plot',
+    //     value:'Scatter Plot'
+    // },
+    // {
+    //     key:'Area Chart',
+    //     text:'Area Chart',
+    //     value:'Area Chart'
+    // }   
 ]

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,Legend,Cell
 } from "recharts";
@@ -44,6 +44,8 @@ export default function NewAreaChart(props){
     
     //Set operands for legend label
     const handleClickonLegend = (event) =>{
+
+
         const { dataKey } = event
         const op = catShow[dataKey]
         if(op){

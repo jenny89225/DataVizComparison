@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Icon, Menu, Segment,Button,Grid } from 'semantic-ui-react'
+import { Icon, Menu, Segment,Button,Grid,Popup } from 'semantic-ui-react'
 import {useState, useEffect} from 'react';
 import NewLineChart from './ChartType/NewLineChart';
 import NewBarChart from './ChartType/NewBarChart';
@@ -24,7 +24,7 @@ export default function ChartCanva(props) {
   const [activeCanva,setActiveCanva] = useState(chartCanvas[0]);
 
   // get properties of each visual --> not yet finish iterate
-  const {chartType,viewName,dimension,metric,legend} = activeCanva
+  const {chartType,viewName,dimension,metric,legend,is_composed,data} = activeCanva
   
   // get unique values in legendlabel
   const legendLabels = [...new Set(props.rawData.map(item => item[legend]))]
@@ -33,8 +33,11 @@ export default function ChartCanva(props) {
   const dimensionValues = [...new Set(props.rawData.map(item => item[dimension]))]
   
   // query diemension,metric,legend and push to new array
-  const newArray = []
-  for(let i=0;i<dimensionValues.length;i++){
+  let newArray = []
+  if(is_composed===true){
+    newArray = data.slice()
+  }else{
+    for(let i=0;i<dimensionValues.length;i++){
       const newObject = {}
       newObject[dimension] = dimensionValues[i]
       for(let j=0;j<legendLabels.length;j++){
@@ -52,6 +55,10 @@ export default function ChartCanva(props) {
       }
       newArray.push(newObject)
     }      
+  }
+
+
+
   
   // highlight selected canva and show content of selected canva
   const handleItemClick = (e, { name }) => {
@@ -78,7 +85,7 @@ export default function ChartCanva(props) {
       active={activeCanva.viewName === i.viewName}
       onClick={handleItemClick}
     >
-      <div>{i.viewName}</div>
+      <Popup size="mini" content={i.viewName} trigger={<div>{i.viewName.slice(0,15)}...</div>} />
     </Menu.Item>)
 
 
@@ -132,64 +139,12 @@ export default function ChartCanva(props) {
             <h3>{activeCanva.viewName}</h3>
           </Grid.Row>
           <Grid.Row centered>{activeChart}</Grid.Row>
-          {/* <img src='https://react.semantic-ui.com/images/wireframe/paragraph.png' /> */}
         </Grid>
       </Segment>
-      <Menu attached='bottom' tabular>
+      <Menu attached='bottom' compact>
         {allCanvas}
       </Menu>
     </div>
   )
 
 }
-
-// export default class ChartCanva extends Component {
-//   state = { activeItem: 'active' }
-
-//   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
-//   // handleChartAdd = ()=><Menu.Item>chart 4</Menu.Item>
-
-//   render() {
-//     const { activeItem } = this.state
-
-//     return (
-//       <div>
-//         <Segment attached='top'>
-//           <img src='https://react.semantic-ui.com/images/wireframe/paragraph.png' />
-//           {/* <App/> */}
-//         </Segment>
-
-//         <Menu attached='bottom' tabular>
-//           <Menu.Item
-//             name='1'
-//             active={activeItem === '1'}
-//             onClick={this.handleItemClick}
-//           >
-//             chart 1
-//           </Menu.Item>
-
-//           <Menu.Item
-//             name='2'
-//             active={activeItem === '2'}
-//             onClick={this.handleItemClick}
-//           >
-//             chart 2
-//           </Menu.Item>
-
-//           <Menu.Menu position='right'>
-//             <Menu.Item
-//               name='new-tab'
-//               // active={activeItem === 'new-tab'}
-//               // onClick={this.handleItemClick}
-//             >
-//               <Button onClick={this.handleChartAdd}>
-//                 <Icon name='add' />
-//                 Add New Chart
-//               </Button>
-//             </Menu.Item>
-//           </Menu.Menu>
-//         </Menu>
-//       </div>
-//     )
-//   }
-// }

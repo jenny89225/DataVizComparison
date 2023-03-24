@@ -51,16 +51,17 @@ function statisticalComposition(operands,func){
     const newOperands = operands.slice()
     let res = 0
     // check opType and sum arry of Entire Chart"
+
     // for(let i=0;i<newOperands.length;i++){
     //     if(newOperands[i].opType=="Entire Chart"){
-    //         // let sumMetricValue = newOperands[i].metricValue[0]
+    //         let sumMetricValue = newOperands[i].metricValue[0]
 
     //         // // console.log(sumMetricValue+newOperands[i].metricValue[1] )
-    //         // for(let j=1;j<newOperands[i].metricValue.length;j++){
-    //         //     sumMetricValue = add(sumMetricValue,matrix(newOperands[i].metricValue[j]))
-    //         // }
+    //         for(let j=1;j<newOperands[i].metricValue.length;j++){
+    //             sumMetricValue = add(sumMetricValue,matrix(newOperands[i].metricValue[j]))
+    //         }
             
-    //         // newOperands[i].metricValue =  sumMetricValue.valueOf()
+    //         newOperands[i].metricValue =  sumMetricValue.valueOf()
     //     }
     // }
     // console.log(newOperands)

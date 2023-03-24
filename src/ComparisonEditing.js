@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react'
-import {Segment,Image,Dropdown,Grid,Button,Label} from 'semantic-ui-react'
+import {Segment,Grid} from 'semantic-ui-react'
 import ComparisonCanva from './ComparisonCanva';
 import CompositionPanel from './CompositionPanel';
 import Result from './Result';
@@ -32,6 +32,9 @@ export default function ComparisonEditing(props){
     // set number of charts
     const[items,setItems] = useState(2)
 
+    // set legend to hide or show
+    const [clear,setClear]= useState(true);
+
     // add number of charts
     const handleAdd= () =>{
         setItems(items+1);
@@ -40,6 +43,7 @@ export default function ComparisonEditing(props){
     const handleRemove= () =>{
         setItems(items-1);
     }
+
 
     const selectedItems =[...Array(items).keys()].map(key=>
         <Grid.Column style={{padding:5}}>
@@ -56,6 +60,8 @@ export default function ComparisonEditing(props){
                 operator={props.operator}
                 isComposed={isComposed} 
                 safetyCheckHandler={props.safetyCheckHandler}
+                setClear={setClear}
+                clear={clear}
             />:<p></p> }
 
         </Grid.Column>)
@@ -97,6 +103,8 @@ export default function ComparisonEditing(props){
                             setOperatorHandler={props.setOperatorHandler}
                             isComposed={isComposed}
                             setIsComposed={setIsComposed}
+                            setClear={setClear}
+                            clear={clear}
                         />
                     </Grid.Column>   
                 </Grid.Row>
@@ -107,11 +115,11 @@ export default function ComparisonEditing(props){
                         operator={props.operator} 
                         isSafe={props.isSafe} 
                         palette={props.palette} 
-                        safetyCheckHandler={props.safetyCheckHandler} 
                         resultActive={props.resultActive}
                         resultActiveCheckHandler={props.resultActiveCheckHandler}
                         handleClickonRefreshResult={props.handleClickonRefreshResult}
                         clickHandler={props.clickHandler}
+
                     />
                 </Grid.Row>
             </Grid>

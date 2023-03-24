@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react'
-import {Dropdown,Button,Menu,Label,Icon, MenuItem} from 'semantic-ui-react'
+import {Dropdown,Button,Menu,Label,Icon} from 'semantic-ui-react'
 
 // Todo: add arrow to indicate result on top after clicking compose, h
 // handle duplicate situation! show alert?
@@ -16,15 +16,21 @@ export default function CompositionPanel(props){
     // set arity to control add canvas
     const[arity,setArity]=useState("Binary")
     const handleArity =(e, data)=>{
+         // hide previous result and prevent re-render
+        props.safetyCheckHandler(false)  
         setArity(data.value)
         const newOperator = {...props.operator}
         newOperator.arity = data.value
-        props.setOperatorHandler(newOperator)        
+        props.setOperatorHandler(newOperator)   
+           
     }
 
     // set composition operator to show other selections like arithmetic function
     const[composition,setComposition]=useState("")
     const handleComposition =(e, data)=>{
+        // hide previous result and prevent re-render
+        props.safetyCheckHandler(false)
+
         setComposition(data.value)
         const newOperator = {...props.operator}
         newOperator.name = data.value
@@ -47,6 +53,7 @@ export default function CompositionPanel(props){
 
     // compose to do safety check 
     const handleSafetycheck = () =>{
+        
         // check all properties of operator are selected
         const {arity,name,func} = props.operator
         if(!arity|| !name|| (name==="Statistical Composition" && !func)){
@@ -60,6 +67,15 @@ export default function CompositionPanel(props){
         // can not used is selected as condition will crash in some case
         const composedOperands = props.operands.slice(0,props.operator.item)
 
+        // check operand selected
+
+        if(composedOperands.find( v => v.opType === undefined )){
+            props.safetyCheckHandler(false)
+            const message = <Label basic color='red' pointing='left'> Please check operands are selected.</Label>
+            setAlertM(message)
+            setTimeout(() => {setAlertM("")}, 2000)
+            return 
+        }
 
         // check all operands are same types
         if(composedOperands.find( v => v.opType !== props.operands[0].opType )){
@@ -108,6 +124,8 @@ export default function CompositionPanel(props){
             // clear some dropdown selections
             setComposition("")
             setFunc("")
+            // hide selected legend
+            props.setClear(!props.clear)
             props.setIsComposed(true)
 
         }
@@ -129,7 +147,7 @@ export default function CompositionPanel(props){
 
     return(
         <Menu fluid borderless>
-        <Menu.Item header>Composition</Menu.Item>
+        <Menu.Item header>Select Arity and Operator</Menu.Item>
         <Menu.Item>
         <Dropdown 
             placeholder='Select Arity' 
@@ -173,7 +191,7 @@ export default function CompositionPanel(props){
             value={func||""}
             />           
         </Menu.Item>:null}
-        <Menu.Item onClick={handleSafetycheck}>Compose</Menu.Item>
+        <Menu.Item onClick={handleSafetycheck}><Button primary>Compose</Button></Menu.Item>
         <Menu.Item>{alertM}</Menu.Item>
       </Menu>
       

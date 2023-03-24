@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {Segment,Image,Dropdown,Button,Grid,Pagination} from 'semantic-ui-react'
+import React, { useState} from "react";
+import {Segment,Dropdown,Button,Grid,Header} from 'semantic-ui-react'
 import NewLineChart from './ChartType/NewLineChart'
 import NewBarChart from './ChartType/NewBarChart'
 import NewAreaChart from "./ChartType/NewAreaChart";
@@ -18,13 +18,17 @@ export default function ComparisonCanva(props){
     const [selectedOpType,setSelectedOpType] = useState("")    
 
     // get properties of each visual --> not yet finish iterate
-    const {chartType,viewName,dimension,metric,legend} = selectedVisual
+    const {chartType,viewName,dimension,metric,legend,
+        is_composed,data,composed_legendValue,composed_metricValue,composed_dimensionValue} = selectedVisual
 
     // to identify chart rendered in comaprison or not
     const [compared,setCompared] = useState(true)
 
     // set selected dot for constant and mark in line chart
     const [selectedDot, setSelectedDot] = useState({ x: null, y: null });
+
+    // // set legend selected or not
+    // const [clear,setClear]= useState(true);
 
     // active bar idx
     const [activeIndex, setActiveIndex] = useState(-1);
@@ -41,7 +45,11 @@ export default function ComparisonCanva(props){
     const dimensionValues = [...new Set(props.rawData.map(item => item[dimension]))]
     
     // query diemension,metric,legend and push to new array 
-    const newArray = []
+    let newArray = []
+    if(is_composed===true){
+        newArray = data.slice()
+      }else{
+
     for(let i=0;i<dimensionValues.length;i++){
         const newObject = {}
         newObject[dimension] = dimensionValues[i]
@@ -60,11 +68,13 @@ export default function ComparisonCanva(props){
         }
         newArray.push(newObject)
     }    
+}
 
 
     // refresh operands 
     const handleClickonRefresh = () =>{
         props.safetyCheckHandler(false)
+        props.setClear(!props.clear)
         if (selectedOpType!="Entire Chart"){
             setSelectedDot({x:null,y:null})
             setActiveIndex(-1)
@@ -98,6 +108,8 @@ export default function ComparisonCanva(props){
                         items={props.items}
                         selectedDot={selectedDot}
                         setSelectedDot={setSelectedDot}
+                        clear={props.clear}
+                        safetyCheckHandler={props.safetyCheckHandler}
                     />
         break;
     case 'Bar Chart':
@@ -115,6 +127,8 @@ export default function ComparisonCanva(props){
                         activeBar={activeBar} 
                         setActiveBar={setActiveBar}
                         showLegend={showLegend}
+                        clear={props.clear}
+                        safetyCheckHandler={props.safetyCheckHandler}
                     />
         break;
     case 'Scatter Plot':
@@ -135,6 +149,7 @@ export default function ComparisonCanva(props){
                         activeBar={activeBar} 
                         setActiveBar={setActiveBar}
                         showLegend={showLegend}
+                        safetyCheckHandler={props.safetyCheckHandler}
                      />
         break;              
     default:
@@ -153,7 +168,24 @@ export default function ComparisonCanva(props){
         setSelectedOpType(data.value)
         // whenever opType changed, update reference dot to hide the refenrence dot
         setSelectedDot({x:null,y:null})
-        if( data.value==="Entire Chart"){
+        if( data.value==="Entire Chart"&& is_composed){
+            const newOperand ={
+                idx:props.itemIdx,   
+                isSelected:true,         
+                visualName:viewName,
+                opType:data.value,
+                dimensionValue:composed_dimensionValue,           
+                legendValue:composed_legendValue,
+                metricValue:composed_metricValue,
+                dimension:dimension,
+                metric:metric,
+                legend:legend,
+                data:newArray
+            }
+            // console.log("Entire Chart is_composed operand",newOperand )
+            props.setOperandsHandler(newOperand)
+            // console.log(newOperand)
+        } else if( data.value==="Entire Chart"&& !is_composed){
             const metricValue_lst = []
             legendLabels.forEach((item)=> {
                 let m = newArray.map(metric => metric[item])
@@ -173,6 +205,7 @@ export default function ComparisonCanva(props){
                 legend:legend,
                 data:newArray
             }
+            // console.log("Entire Chart not_composed operand",newOperand )
             props.setOperandsHandler(newOperand)
             // console.log(newOperand)
         }
@@ -186,7 +219,8 @@ export default function ComparisonCanva(props){
         <Segment>           
             <Grid>
                 <Grid.Row centered>
-                    <h3>Please select chart {props.operator.name=="Decomposition-explode"?"":"and operand type"} </h3>
+                    {/* <h3>Please select chart title {props.operator.name=="Decomposition-explode"?"":"and operand type"} </h3> */}
+                    <Header as='h3' color='violet' >Please select chart title and operand type in this visualization.</Header>
                 </Grid.Row>
                 <Grid.Row centered>
                     <Grid.Column width={7} style={{paddingLeft: 2,paddingRight: 2}}>
@@ -220,7 +254,7 @@ export default function ComparisonCanva(props){
                         >Refresh Operands</Button>        
                     </Grid.Column>
                 </Grid.Row>
-                <Grid.Row centered><h3>{selectedVisual.viewName}</h3></Grid.Row>
+                <Grid.Row centered><h4>{selectedVisual.viewName}</h4></Grid.Row>
                 <Grid.Row centered>{activeChart}</Grid.Row>
                 
             </Grid>

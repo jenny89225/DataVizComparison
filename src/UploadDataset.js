@@ -1,5 +1,5 @@
-import React, { Component, useState } from 'react'
-import { Button, Segment, Input } from 'semantic-ui-react'
+import React, { useState } from 'react'
+import { Button, Input,Label } from 'semantic-ui-react'
 import DatasetTable from './DatasetTable';
 
 // Need not hardcore input width
@@ -8,12 +8,22 @@ export default function UploadDataset(props){
   const [file, setFile] = useState();
   const [array, setArray] = useState(rawData);
   const [fileName,setFileName] = useState("Demo Data for Taxi Population")
+  const [fileAlert,setFileAlert] = useState("")
 
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-    setFileName(e.target.files[0].name)
-    setFile(e.target.files[0]);
+    if(e.target.files[0].size/1024 > 900){ // restric upload file size
+      const message = <Label basic color='red' pointing='left'>File size should not exceed 900 KB</Label>
+      setFileAlert(message)
+      setTimeout(() => {setFileAlert("")}, 3000)
+      setFileName("")
+      setFile(null);
+    }else{
+      setFileName(e.target.files[0].name)
+      setFile(e.target.files[0]);
+    }
+
   };
 
   const csvFileToArray = string => {
@@ -74,6 +84,7 @@ return(
       style={{minWidth:"67em"}}
     /> 
     <Button floated='right' onClick={(e) => {handleOnSubmit(e)}}>Upload Datatset</Button>
+    {fileAlert}
     <h3 >{fileName}</h3>
     <DatasetTable array={array}/>
   </div>

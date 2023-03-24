@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState,useEffect} from "react";
 import {
   BarChart,
   Bar,
@@ -19,7 +19,7 @@ export default function NewBarChart(props){
     const newData = props.data.slice()
     const labels = Object.keys(newData[0]).slice(1)
 
-    // set stroke width to 3
+    // set color to every bars
     const [color, setColor] = useState(labels.reduce((labels,curr,idx)=> (labels[curr]=props.palette[idx],labels),{}));
 
     // set category hide or show
@@ -32,6 +32,10 @@ export default function NewBarChart(props){
     // const [activeBar, setActiveBar] = useState(-1);
     
     const handleMouseClickonBar = (entry, index) => {
+
+        // make sure result chart will not re-render again
+        props.safetyCheckHandler(false)
+        
         const dataKey = entry.tooltipPayload[0].name
         const idx = labels.indexOf(entry.tooltipPayload[0].name)
         props.setActiveIndex(index);
@@ -57,8 +61,15 @@ export default function NewBarChart(props){
     
     //Set operands for legend label
     const handleClickonLegend = (event) =>{
+        // make sure result chart will not re-render again
+        props.safetyCheckHandler(false)
+
         const { dataKey } = event
         const op = catShow[dataKey]
+        if(Object.keys(color).some(k => color[k]==="#FF2400")){
+            return
+        }
+
         if(op){
             setCatShow({ ...catShow, [dataKey]:false});
             setColor({ ...color, [dataKey]: props.palette[labels.indexOf(dataKey)] });
@@ -79,7 +90,6 @@ export default function NewBarChart(props){
         }else{
             setCatShow({ ...catShow, [dataKey]:true });
             setColor({ ...color, [dataKey]: "#FF2400" });
-            const filteredData = newData.map(item=> item[dimension])
             const newOperand = {
                 idx:props.idx,
                 isSelected:true,
@@ -118,6 +128,12 @@ export default function NewBarChart(props){
           )):null}
         </Bar>
         )
+    // re-create legend width when refreshing operands
+    useEffect(() => {
+        setColor(labels.reduce((labels,curr,idx)=> (labels[curr]=props.palette[idx],labels),{}))
+
+    }, [props.clear]);
+
 
 
     return(
@@ -128,7 +144,7 @@ export default function NewBarChart(props){
             margin={{top: 3,right: 15,left: 15,bottom: 3,}}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey={dimension} />
-                <YAxis />
+                <YAxis label={{ value: metric, angle: -90, position: 'insideLeft' }} />
                 <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
                 {props.opType=='Constant Value'?
                 <p></p>:<Legend onClick={props.compared && props.opType=="Legend Label"?handleClickonLegend:()=>{}}/>}

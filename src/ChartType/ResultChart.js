@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Button,Grid, GridRow} from 'semantic-ui-react'
+import { Button,Grid,Input,Form,Label} from 'semantic-ui-react'
 import {
   LineChart,
   Line,
@@ -9,10 +9,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer ,
-  AreaChart,
-  ReferenceLine,
-  Area,
-  ReferenceDot
 } from "recharts";
 import FileSaver from "file-saver";
 import { useCurrentPng } from "recharts-to-png";
@@ -21,9 +17,24 @@ import { useCurrentPng } from "recharts-to-png";
 // how to decide chart type???
 // explode composition will cause a lot of spaces between responsive container
 
+
 export default function ResultChart(props){
+
+    // handle chart name
+    const [name,setName] = useState("")
+
+    // set success message for adding chart
+    const [successM,setSuccessM]= useState("")
+
+    function handleNameChange(e) {
+        // onChange(name, e.target.value);
+        setName(e.target.value)
+
+      }
+
     // useCurrentPng usage (isLoading is optional)
     const [getPng, { ref, isLoading }] = useCurrentPng();
+
 
     const handleDownload = useCallback(async () => {
         const png = await getPng();
@@ -34,18 +45,29 @@ export default function ResultChart(props){
         }
       }, [getPng]);
     
-    const handleAddNewChart = () => {
-       const newChart =  {
-        chartType:'Line Chart',
-        viewName:`The result of ${props.op}`,
-        dimension:props.dimension,
-        metric:'population',
-        legend:props.legendName,
-        is_composed:true,
-        data: props.newData
-    }
+    const handleAddNewChart = (e) => {
+        const form = document.forms.addNewView
+        form.view.value = ""
+        const newLegendValue = Object.keys(props.newData[0]).filter(i=>i!==props.dimension)
+        const newChart =  {
+            chartType:'Line Chart',
+            viewName: name===""?`The result of ${props.op}`:name,
+            dimension:props.dimension,
+            metric:props.metric,
+            composed_legendValue: newLegendValue,
+            composed_metricValue:props.newData.map(i => i[newLegendValue[0]]),
+            composed_dimensionValue:props.newData.map(i => i[props.dimension]),
+            legend:props.legend,
+            is_composed:true,
+            data: props.newData
+        }
         props.clickHandler(newChart)
-        console.log(newChart)
+
+        const message = <Label basic color='blue' pointing='below'> 
+        Successfully created. Please check in <strong>Create visualizations</strong> section</Label>
+        setSuccessM(message)
+        setTimeout(() => {setSuccessM("")}, 3000)
+        // console.log("newChart",newChart)
         
     }
 
@@ -105,22 +127,27 @@ export default function ResultChart(props){
         <>
         <Grid>
         <Grid.Row centered>
+        {/* <Input size='big' type='text' placeholder={`The result of ${props.op}`} /> */}
             <h3>The result of {props.op}</h3>
         </Grid.Row>
         <Grid.Row centered>
         {chart}
         </Grid.Row>
+        <Grid.Row centered>{successM} </Grid.Row>
         <Grid.Row centered>
+            
+            <Form name="addNewView" onSubmit={handleAddNewChart}>
+                <Input name="view" onChange={handleNameChange} type='text' placeholder='Edit Chart Name' />
+                <Button type="submit" >Add as New Visualization</Button>
+            </Form>
             <Button.Group size="tiny">
-                <Button size="tiny" onClick={handleAddNewChart}>Add chart as new view</Button>
-                <Button size="tiny" onClick={handleDownload}>{isLoading ? 'Downloading...' :"Save Image"}</Button>
                 <Button size="tiny" onClick={props.handleClickonRefreshResult}>Clear Result</Button>
+                <Button size="tiny" onClick={handleDownload}>{isLoading ? 'Downloading...' :"Download Result"}</Button>
             </Button.Group>
-        </Grid.Row>                            
+        </Grid.Row>
+                                   
         </Grid>
-        
-        
-        {/* <Button onClick={handleDownload}>{isLoading ? 'Downloading...' : 'Download Chart'}</Button> */}
         </>
     )
 }
+

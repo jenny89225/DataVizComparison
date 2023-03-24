@@ -1,5 +1,5 @@
-import React, { Component, useEffect, useState,useCallback } from 'react';
-import { Segment,Grid,Image,Button, GridRow,} from 'semantic-ui-react';
+import React, {useCallback } from 'react';
+import { Segment} from 'semantic-ui-react';
 import {statisticalComposition,unionComposition,explodeComposition,extractComposition} from './operators.js';
 import ResultChart from './ChartType/ResultChart.js';
 import FileSaver from "file-saver";
@@ -37,15 +37,16 @@ export default function Result(props){
         // To do: transform array of objects into array of matrices, need to based on optype
         const opFunc = props.operator.name;
         const composedOperands = props.operands.slice(0,props.operator.item)
-
         const legendLabel = composedOperands.map(
             (item)=> item.legendValue)
         // get legend name for chart
         legendName = `${mapping[props.operator.func]} of ${legendLabel.join(" and ")}`
 
+        console.log("Operands waiting for compose.",composedOperands) 
+
         switch (opFunc) {
         case 'Statistical Composition':
-            
+               
             resList = statisticalComposition(composedOperands,props.operator.func)
 
             legends=[legendName]
@@ -86,18 +87,22 @@ export default function Result(props){
     }
 
     const res = <ResultChart
-    resultActive={props.resultActive}
-    isSafe={props.isSafe}
-    newData={newData} 
-    legendName={legendName} 
-    dimension={dimension}
-    palette={props.palette}
-    legends={legends}
-    op={props.operator.name}
-    ref={ref}
-    handleClickonRefreshResult={props.handleClickonRefreshResult}
-    clickHandler={props.clickHandler}
-        />
+                    resultActive={props.resultActive}
+                    isSafe={props.isSafe}
+                    newData={newData} 
+                    legend={props.operands[0].legend} 
+                    dimension={dimension}
+                    palette={props.palette}
+                    legends={legends}
+                    metric={props.operands[0].metric}
+                    op={props.operator.name}
+                    ref={ref}
+                    handleClickonRefreshResult={props.handleClickonRefreshResult}
+                    clickHandler={props.clickHandler}
+                    safetyCheckHandler={props.safetyCheckHandler}
+                    setClear={props.setClear}
+                    clear={props.clear}
+                 />
 
 
     return(

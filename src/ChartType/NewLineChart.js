@@ -8,9 +8,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer ,
-  AreaChart,
-  ReferenceLine,
-  Area,
   ReferenceDot
 } from "recharts";
 
@@ -23,7 +20,6 @@ import {
 
 export default function NewLineChart(props){
     const{chartType,viewName,dimension,metric,legend} = props.activeCanva
-    
     const newData = props.data.slice()
     const labels = Object.keys(newData[0]).slice(1)
 
@@ -32,12 +28,16 @@ export default function NewLineChart(props){
     
     // set stroke width to 3
     const [opacity, setOpacity] = useState(labels.reduce((labels,curr)=> (labels[curr]=2,labels),{}));
-
+    
     // set category hide or show
     const [catShow,setCatShow] = useState(labels.reduce((labels,curr)=> (labels[curr]=false,labels),{}))
 
     //Set operands for marks and constant values
     const handleMouseClickonDot = (event) =>{
+
+        // make sure result chart will not re-render again
+        props.safetyCheckHandler(false)
+
         const { cx, cy, stroke, payload, dataKey,value,color} = event
         const xValue = payload[dimension]
         props.setSelectedDot({x:xValue,y:value})
@@ -61,10 +61,17 @@ export default function NewLineChart(props){
     
     //Set operands for legend label
     const handleClickonLegend = (event) =>{
+
+
+        // make sure result chart will not re-render again
+        props.safetyCheckHandler(false)
         
         const { dataKey } = event
         const op = catShow[dataKey]
-        setOpacity({ ...opacity, [dataKey]: 5 });
+        // setOpacity({ ...opacity, [dataKey]: 5 });
+        if(Object.keys(opacity).some(k => opacity[k]===10)){
+            return
+        }
         if(op){
             setCatShow({ ...catShow, [dataKey]:false});
             setOpacity({ ...opacity, [dataKey]: 2 });
@@ -85,7 +92,6 @@ export default function NewLineChart(props){
         }else{
             setCatShow({ ...catShow, [dataKey]:true });
             setOpacity({ ...opacity, [dataKey]: 10 });
-            const filteredData = newData.map(item=> item[dimension])
             const newOperand = {
                 idx:props.idx,
                 isSelected:true,
@@ -119,6 +125,11 @@ export default function NewLineChart(props){
             activeDot={false}
         />
         )
+    // re-create legend width when refreshing operands
+    useEffect(() => {
+        setOpacity(labels.reduce((labels,curr)=> (labels[curr]=2,labels),{}))
+
+    }, [props.clear]);
 
     return(
         <ResponsiveContainer aspect={2}  width={props.items>1?"100%":"80%"}>
@@ -133,7 +144,7 @@ export default function NewLineChart(props){
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey={dimension} />
-                <YAxis />
+                <YAxis label={{ value: metric, angle: -90, position: 'insideLeft' }} />
                 <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
                 {props.opType=='Constant Value'?<p></p>:<Legend onClick={props.compared && props.opType=="Legend Label"?handleClickonLegend:()=>{}}/>}
                 {lines}
@@ -144,6 +155,7 @@ export default function NewLineChart(props){
 
     )
 }
+
 
 
 // data format

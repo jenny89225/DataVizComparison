@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import { Container,Accordion, Icon, Segment,Grid,Image,Button,Dropdown, ButtonGroup} from 'semantic-ui-react'
 import UploadDataset from './UploadDataset'
 import ComparisonEditing from './ComparisonEditing'
@@ -8,21 +8,6 @@ import Intro from './Intro'
 
 const palette = ['#5E67C2',"#6daba9","#C067BC","#FF719F","#FF947B","#00A1EC","#ff7063","#f3f702","#00D2E9","#BF464D",
 '#FED766','#FE4A49','#009FB7','#804674','#A86464','#00FF00','#AA77FF','#A84448','#F7C04A','#539165','#C04A82','#3E54AC','#D70040']
-// const palette = [
-//     'red',
-//     'orange',
-//     'yellow',
-//     'olive',
-//     'green',
-//     'teal',
-//     'blue',
-//     'violet',
-//     'purple',
-//     'pink',
-//     'brown',
-//     'grey',
-//     'black',]
-
 
 export default function Interface(props){
 
@@ -46,14 +31,13 @@ export default function Interface(props){
     const [visuals,setVisuals] = useState(
         [
             {chartType:'Line Chart',viewName:'daily taxi population',dimension:'day',metric:'population',legend:'company',aggfunc:"sum"},
-            {chartType:'Area Chart',viewName:'daily taxi revenue',dimension:'day',metric:'revenue',legend:'company',aggfunc:"sum"},
+            // {chartType:'Area Chart',viewName:'daily taxi revenue',dimension:'day',metric:'revenue',legend:'company',aggfunc:"sum"},
             {chartType:'Bar Chart',viewName:'taxi revenue by type',dimension:'type',metric:'revenue',legend:'company',aggfunc:"sum"}
     ])
 
 
     //let child componet update visuals
     const clickHandler = (newVisual) => {
-        // console.log("clickHandler",newVisual)
         if(Array.isArray(newVisual)){
             setVisuals(newVisual)
         }else{
@@ -67,8 +51,14 @@ export default function Interface(props){
 
     // store selected operand properties 
     const [operands,setOperands] = useState(
-        [{idx:0,isSelected:false},{idx:1,isSelected:false},{idx:2,isSelected:false},{idx:3,isSelected:false},{idx:4,isSelected:false}
-            // {
+        [   {idx:0,isSelected:false},
+            {idx:1,isSelected:false},
+            {idx:2,isSelected:false},
+            {idx:3,isSelected:false},
+            {idx:4,isSelected:false}
+            // ,{
+            //     idx:0,
+            //     isSelected:false,
             //     opType:"Legned Label",
             //     viewName:'daily taxi population',
             //     dimension:'day',
@@ -85,25 +75,7 @@ export default function Interface(props){
             //         { day:"11-04", Comfort: 2800,},
             //         { day:"11-05", Comfort: 3500,}   
             //     ]
-            // },
-            // {
-            //     opType:"Legned Label",
-            //     viewName:'daily taxi population',
-            //     dimension:'day',
-            //     metric:'population',
-            //     legend:'company',
-            //     dimensionValue:"", // if it's all legend group
-            //     metricValue:"", // if it's all legend group
-            //     legendValue:"Smart",
-            //     aggfun:"sum",
-            //     data:[
-            //         { day:"11-01", Smart: 2400},
-            //         { day:"11-02", Smart: 2200},
-            //         { day:"11-03", Smart: 2900},
-            //         { day:"11-04", Smart: 1200},
-            //         { day:"11-05", Smart: 1800}    
-            //     ]
-            // }            
+            // },         
         ]
     )
 
@@ -119,9 +91,8 @@ export default function Interface(props){
     const setOperandsHandler = (slctOp) => {
         let newArr = [...operands]
         newArr[slctOp.idx] = slctOp
-        // console.log(newArr)
+
         setOperands(newArr)
-        // console.log(slctOp)
     }    
 
     //let child component update operator
@@ -142,11 +113,9 @@ export default function Interface(props){
     // let child component update resultActive
     const resultActiveCheckHandler = (isActive) =>{
         setResultActive(isActive)
-        // console.log("isActive",isActive)
-        // console.log("resultActive",resultActive)
     }
 
-    // let child component refresh resultActive & isSafe
+    // let child component refresh compostion resultActive & isSafe
     const handleClickonRefreshResult = () =>{
         setResultActive(false)   
         safetyCheckHandler(false)
@@ -197,7 +166,7 @@ export default function Interface(props){
                 onClick={handleClick}
                 >
                 <Icon name='dropdown' />
-                Compose Views/Operands for comparison
+                Compose Operator and Operands for data comparison task
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex === 1}>
                     <Segment.Group horizontal>
